@@ -52,9 +52,13 @@ function fceKalkulacky(klavesa, hodnota) {
             if (vysledek % 2 !==0){
                 vysledek = Math.round(vysledek * 100) / 100;
             }
+            if (isNaN(vysledek) || !isFinite(vysledek) === true) {
+                return outputDisplay.textContent = "Error";
+            }
             history.push(`${vstup} = ${vysledek}`);
             aktualizaceDisplayu();
             vstup = vysledek.toString();
+            inputDisplay.textContent = 0;
             localStorage.setItem("historiePoctu", JSON.stringify(history));
             historyDisplay.innerHTML = history.map(item => `<p>${item}</p>`).join("");
         } catch (error) {
