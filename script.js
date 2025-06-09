@@ -8,8 +8,6 @@ let vstup = "";
 let vysledek = "";
 let history = [];
 
-const vypisHistorie = JSON.parse(localStorage.getItem("historiePoctu"));
-
 function aktualizaceDisplayu() {
     inputDisplay.textContent = vstup || "0";
     outputDisplay.textContent = vysledek || "0";
@@ -25,66 +23,13 @@ window.onload = () => {
 
 buttons.forEach(button => {
     button.addEventListener("click", () => {
-        const value = button.value;
-        const id = button.id;
-        if (value === "=") {
-            try {
-                vstup = vstup.replace("^", "**");
-                console.log(vstup);
-                vysledek = eval(vstup);
-                if (vysledek % 2 !==0){
-                    vysledek = Math.round(vysledek * 100) / 100;
-                }
-                history.push(`${vstup} = ${vysledek}`);
-                console.log(history);
-                aktualizaceDisplayu();
-                vstup = vysledek.toString();
-                localStorage.setItem("historiePoctu", JSON.stringify(history));
-                historyDisplay.innerHTML = history.map(item => `<p>${item}</p>`).join("");
-                console.log(localStorage);
-            } catch (error) {
-                outputDisplay.textContent = "Error";
-            }
-        } else if (id === "clear-all-btn") {
-            vstup = "";
-            vysledek = "";
-            aktualizaceDisplayu();
-        } else if (id === "clear-btn") {
-            vstup = vstup.slice(0, -1);
-            aktualizaceDisplayu();
-        } else {
-            vstup += value;
-            aktualizaceDisplayu();
-        }
+       fceKalkulacky(button.value, button.id);
     });
 });
 
 document.addEventListener("keydown", (event) => {
     const klavesa = event.key;
-    if (klavesa === "Enter") {
-        try {
-            vstup = vstup.replace("^", "**");
-            vysledek = eval(vstup);
-            if (vysledek % 2 !==0){
-                vysledek = Math.round(vysledek * 100) / 100; // zaokrouhlení na dvě desetinná místa
-            }
-            history.push(`${vstup} = ${vysledek}`);
-            aktualizaceDisplayu();
-            vstup = vysledek.toString();
-        } catch (error) {
-            outputDisplay.textContent = "Error";
-        }
-    } else if (klavesa === "Backspace") {
-        vstup = vstup.slice(0, -1);
-        aktualizaceDisplayu();
-    } else if (klavesa === "Escape") {
-        vstup = "";
-        vysledek = "";
-        aktualizaceDisplayu();
-    } else if (/^[0-9+\-*/().^]$/.test(klavesa)) {
-        vstup += klavesa;
-        aktualizaceDisplayu();
-    }
+    fceKalkulacky(klavesa);
 });
 
 clearHistoryBtn.addEventListener("click", () => {
@@ -94,6 +39,42 @@ clearHistoryBtn.addEventListener("click", () => {
 });
 
 
+function vypocet(zadani)
+{
+  let func = new Function("return " + zadani);
+  return func();
+}
 
-
-
+function fceKalkulacky(klavesa, hodnota) {
+  if (klavesa === "Enter" || klavesa === "=") {
+        try {
+            vysledek = vypocet(vstup);
+            if (vysledek % 2 !==0){
+                vysledek = Math.round(vysledek * 100) / 100;
+            }
+            history.push(`${vstup} = ${vysledek}`);
+            aktualizaceDisplayu();
+            vstup = vysledek.toString();
+            localStorage.setItem("historiePoctu", JSON.stringify(history));
+            historyDisplay.innerHTML = history.map(item => `<p>${item}</p>`).join("");
+        } catch (error) {
+            outputDisplay.textContent = "Error";
+        }
+    } else if (klavesa === "Backspace" || hodnota === "clear-btn") {
+        vstup = vstup.slice(0, -1);
+        aktualizaceDisplayu();
+    } else if (klavesa === "Escape" || hodnota === "clear-all-btn") {
+        vstup = "";
+        vysledek = "";
+        aktualizaceDisplayu();
+    } else if (/^[0-9+\-*/().^,]$/.test(klavesa)) {
+        if (klavesa == ",") {
+            klavesa = ".";
+        }
+        else if (klavesa == "^"){
+            klavesa = "**";
+        }
+        vstup += klavesa;
+        aktualizaceDisplayu();
+    }
+};
