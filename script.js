@@ -36,6 +36,7 @@ clearHistoryBtn.addEventListener("click", () => {
     history = [];
     localStorage.removeItem('historiePoctu');
     historyDisplay.innerHTML = "";
+    document.location.reload();
 });
 
 
@@ -58,8 +59,8 @@ function fceKalkulacky(klavesa, hodnota) {
             }
             vstup = vstup.replace("**", "^");
             history.push(`${vstup} = ${vysledek}`);
-            aktualizaceDisplayu();
             vstup = "";
+            aktualizaceDisplayu();
             vysledek = "";
             localStorage.setItem("historiePoctu", JSON.stringify(history));
             historyDisplay.innerHTML = history.map(item => `<p>${item}</p>`).join("");
