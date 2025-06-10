@@ -48,6 +48,7 @@ function vypocet(zadani)
 function fceKalkulacky(klavesa, hodnota) {
   if (klavesa === "Enter" || klavesa === "=") {
         try {
+            vstup = vstup.replace("^", "**");
             vysledek = vypocet(vstup);
             if (vysledek % 2 !==0){
                 vysledek = Math.round(vysledek * 100) / 100;
@@ -55,9 +56,10 @@ function fceKalkulacky(klavesa, hodnota) {
             if (isNaN(vysledek) || !isFinite(vysledek) === true) {
                 return outputDisplay.textContent = "Error";
             }
+            vstup = vstup.replace("**", "^");
             history.push(`${vstup} = ${vysledek}`);
             aktualizaceDisplayu();
-            vstup = vysledek.toString();
+            vstup = "";
             inputDisplay.textContent = 0;
             localStorage.setItem("historiePoctu", JSON.stringify(history));
             historyDisplay.innerHTML = history.map(item => `<p>${item}</p>`).join("");
@@ -74,9 +76,6 @@ function fceKalkulacky(klavesa, hodnota) {
     } else if (/^[0-9+\-*/().^,]$/.test(klavesa)) {
         if (klavesa == ",") {
             klavesa = ".";
-        }
-        else if (klavesa == "^"){
-            klavesa = "**";
         }
         vstup += klavesa;
         aktualizaceDisplayu();
